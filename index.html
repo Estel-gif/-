@@ -3,347 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>像素酒馆：开始你的特调</title>
-    <!-- 建议后续替换为像素字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <title>每日懿盲盒 - Cyberpunk Terminal</title>
+    <!-- 引入科技感字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <style>
-        /* ========== 全局与背景样式 (保持原有纸质复古感) ========== */
+        /* ========== 赛博朋克全局背景 ========== */
         body {
-            background-color: #e5d8c5;
-            background-image: repeating-linear-gradient(45deg, #d3c4b1 25%, transparent 25%, transparent 75%, #d3c4b1 75%, #d3c4b1), repeating-linear-gradient(45deg, #d3c4b1 25%, #e5d8c5 25%, #e5d8c5 75%, #d3c4b1 75%, #d3c4b1);
-            background-position: 0 0, 10px 10px;
-            background-size: 20px 20px;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #4a3e3d;
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            /* 模拟屏幕扫描线 */
+            background-image: linear-gradient(
+                rgba(0, 255, 255, 0.03) 1px, 
+                transparent 1px
+            );
+            background-size: 100% 4px;
+            color: #0ff;
+            font-family: 'Share Tech Mono', 'ZCOOL QingKe HuangYou', sans-serif;
             display: flex;
             justify-content: center;
-            padding: 20px;
-            margin: 0;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            background-color: #fcf5e3;
+        .cyber-container {
             width: 100%;
-            max-width: 400px;
-            border: 2px solid #e0d5c1;
+            max-width: 700px;
             padding: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
             position: relative;
         }
 
-        /* ========== 选料区样式 ========== */
-        #selection-section {
-            text-align: center;
-            padding: 20px 0;
-        }
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .section-subtitle {
-            font-size: 0.9rem;
-            color: #887a77;
-            margin-bottom: 20px;
+        /* 故障风 (Glitch) 霓虹标题 */
+        .cyber-title {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #ffb300,
+                0 0 20px #ffb300,
+                0 0 40px #0ff;
+            margin-bottom: 40px;
+            letter-spacing: 5px;
+            position: relative;
+            animation: glitch-anim 3s infinite;
         }
 
-        /* 配料网格布局 */
-        .ingredients-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
+        @keyframes glitch-anim {
+            0% { text-shadow: 2px 0 0 #ffb300, -2px 0 0 #0ff; }
+            5% { text-shadow: -2px 0 0 #ffb300, 2px 0 0 #0ff; }
+            10% { text-shadow: 2px 0 0 #ffb300, -2px 0 0 #0ff; }
+            15% { text-shadow: 0 0 20px #ffb300, 0 0 40px #0ff; } 
+            100% { text-shadow: 0 0 20px #ffb300, 0 0 40px #0ff; }
         }
-        
-        .ingredient-btn {
-            background-color: #fff;
-            border: 2px solid #e0d5c1;
-            border-radius: 8px;
-            padding: 10px 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #4a3e3d;
-            transition: all 0.2s;
+
+        /* 赛博终端显示器 */
+        .terminal-box {
+            background: rgba(10, 20, 30, 0.85);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 20px rgba(0, 255, 255, 0.2);
+            padding: 40px 30px;
+            position: relative;
+            min-height: 180px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .ingredient-btn.selected {
-            background-color: #f3b9c5; /* 选中后的粉色 */
-            color: white;
-            border-color: #f3b9c5;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .ingredient-icon {
-            font-size: 1.5rem;
-        }
-
-        /* 调酒按钮 */
-        .mix-btn {
-            background-color: #4a3e3d;
-            color: #fcf5e3;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 0 #2a2221;
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-        .mix-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #2a2221;
-        }
-
-        /* 重新开始按钮 */
-        .restart-btn {
-            background-color: transparent;
-            color: #887a77;
-            border: 1px dashed #887a77;
-            padding: 10px;
-            width: 100%;
-            margin-top: 15px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        /* ========== 结果页样式 (与原版基本一致) ========== */
-        #result-section {
-            display: none;
-        }
-        .mood-badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: #f8eeb9;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid #e0d5c1;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
-            font-weight: bold;
-            text-align: center;
-        }
-        .drink-display {
-            background-color: #f3b9c5;
-            height: 200px;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            border: 2px solid #e0d5c1;
+            align-items: flex-start;
+            /* 切角设计 */
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
         }
-        .pixel-drink {
-            width: 40px;
-            height: 80px;
-            background: linear-gradient(to bottom, transparent 20%, #a8d8e6 20%, #a8d8e6 80%, #4a3e3d 80%), linear-gradient(to right, #4a3e3d 20%, transparent 20%, transparent 80%, #4a3e3d 80%);
-            border: 4px solid #4a3e3d;
+
+        /* 屏幕装饰线 */
+        .terminal-box::before {
+            content: "SYSTEM_MEMORY_ARCHIVE // SYS_ID: SY_001";
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.7rem;
+            color: #ffb300;
+            opacity: 0.8;
+        }
+
+        .text-display {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #0ff;
+            text-align: left;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            letter-spacing: 1px;
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        /* 终端光标块 */
+        .cursor-block {
+            display: inline-block;
+            width: 12px;
+            height: 1.2rem;
+            background-color: #ffb300;
+            margin-left: 5px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* 来源标签（剧名） - 优化清晰度：加黑底阴影并调整为赛博橙 */
+        .source-tag {
+            align-self: flex-end;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffaa00; /* 稍微温暖一点的橙金色 */
+            text-shadow: 
+                2px 2px 0px #000, /* 黑色硬阴影垫底，勾勒字形边缘 */
+                -1px -1px 0px #000,
+                0 0 10px rgba(255, 170, 0, 0.6); /* 柔和的外围霓虹发光 */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* 赛博朋克按钮 */
+        .cyber-btn {
+            background: transparent;
+            color: #0ff;
+            font-size: 1.2rem;
+            border: 2px solid #0ff;
+            padding: 15px 40px;
+            margin-top: 40px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             position: relative;
+            transition: all 0.2s;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
         }
-        .pixel-drink::after {
-            content: ''; position: absolute; bottom: -20px; left: 10px; width: 12px; height: 20px; background-color: #4a3e3d;
+
+        .cyber-btn:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 20px #0ff;
         }
-        .pixel-drink::before {
-            content: ''; position: absolute; bottom: -28px; left: -10px; width: 52px; height: 8px; background-color: #4a3e3d;
+
+        .cyber-btn:disabled {
+            background: #333;
+            color: #777;
+            border-color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
         }
-        .result-title { text-align: center; font-size: 1.8rem; margin: 10px 0 5px 0; font-weight: 900; }
-        .result-subtitle { text-align: center; font-size: 1rem; color: #887a77; margin-bottom: 20px; }
-        .result-desc { font-size: 0.95rem; line-height: 1.8; text-align: justify; margin-bottom: 20px; }
-        .quote { font-style: italic; color: #887a77; text-align: center; margin: 20px 0; padding: 0 20px; position: relative; }
-        .quote::before { content: '“'; font-size: 3rem; color: #e0d5c1; position: absolute; left: 0; top: -10px; font-family: serif; }
-        
-        .recipe-box { background-color: #f7eedb; border: 1px solid #e0d5c1; padding: 15px; margin-top: 30px; position: relative; }
-        .recipe-box-title { font-weight: bold; margin-bottom: 10px; border-bottom: 1px dashed #d1c5b0; padding-bottom: 5px; }
-        .tape { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; background-color: rgba(245, 230, 140, 0.7); }
-        .recipe-item { display: inline-block; background-color: #fff; border: 1px solid #e0d5c1; padding: 4px 8px; font-size: 0.85rem; margin: 4px 4px 4px 0; border-radius: 2px; }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <!-- === 1. 选料页面 === -->
-        <div id="selection-section">
-            <div class="section-title">你的吧台</div>
-            <div class="section-subtitle">请选择配料（至少选2样）</div>
-            
-            <div class="ingredients-grid" id="ingredients-container">
-                <!-- 配料按钮由JS动态生成 -->
-            </div>
-
-            <button class="mix-btn" onclick="shakeDrink()">摇酒 (MIX!)</button>
+<div class="cyber-container">
+    <h1 class="cyber-title">每日懿盲盒</h1>
+    
+    <div class="terminal-box">
+        <div class="text-display">
+            <span id="displayText">AWAITING_INPUT... 点击下方按钮调取记忆数据块。</span><span class="cursor-block" id="cursorBlock"></span>
         </div>
-
-        <!-- === 2. 结果页面 === -->
-        <div id="result-section">
-            <div class="mood-badge">
-                顾客心情<br>
-                <div id="mood-icons">☕ ☕</div>
-            </div>
-
-            <div class="drink-display">
-                <div class="pixel-drink" id="drink-img"></div>
-            </div>
-
-            <h1 id="res-title" class="result-title">加载中...</h1>
-            <div id="res-subtitle" class="result-subtitle">加载中...</div>
-            <p id="res-desc" class="result-desc"></p>
-            <div id="res-quote" class="quote"></div>
-
-            <div class="recipe-box">
-                <div class="tape"></div>
-                <div class="recipe-box-title">实际投入配料</div>
-                <div id="res-recipe">
-                    <!-- 玩家选中的配料会展示在这里 -->
-                </div>
-            </div>
-
-            <button class="restart-btn" onclick="resetGame()">再调一杯</button>
-        </div>
-
+        <div class="source-tag" id="sourceTag">—— 《剧名》</div>
     </div>
 
-    <script>
-        // === 1. 吧台配料库 (可以无限添加) ===
-        const allIngredients = [
-            { id: 'vodka', name: '伏特加', icon: '🍶' },
-            { id: 'gin', name: '金酒', icon: '🍾' },
-            { id: 'rum', name: '朗姆酒', icon: '🥃' },
-            { id: 'mint', name: '薄荷叶', icon: '🌿' },
-            { id: 'salt', name: '海盐', icon: '🧂' },
-            { id: 'ice', name: '冰块', icon: '🧊' },
-            { id: 'soda', name: '苏打水', icon: '🫧' },
-            { id: 'lemon', name: '柠檬', icon: '🍋' }
-        ];
+    <button class="cyber-btn" id="actionBtn" onclick="drawQuote()">
+        ACCESS DATA // 抽取
+    </button>
+</div>
 
-        let selectedIngredients = []; // 记录玩家选中的配料ID
+<script>
+    // ========== 整理好的数据：戏文 + 两字出处 ==========
+    const memories = [
+        { text: "滑腻,冰凉,绸从掌中的茧上滑过,像一条蛇。", source: "巾帼" },
+        { text: "蜀使仍保持着双手奉上的动作,头颅低垂,我能感受到他视死如归的紧绷。", source: "巾帼" },
+        { text: "隔着这层艳丽的布料,我摸到自己稳健的、充满生机的心跳。", source: "巾帼" },
+        { text: "我就要穿着它,在坚不可摧的营垒里,看着你,直到死亡。", source: "巾帼" },
+        { text: "鼓声起时,沉沉地压过满座喧哗。", source: "荣归" },
+        { text: "故乡在身后,并不呼唤我,模糊、缄默,像一轮月沉入酒中。", source: "荣归" },
+        { text: "洛阳的夜烧成一片红。朝堂没有了声音,城阙没有了轮廓,只有令人作呕的血气。", source: "梦魇" },
+        { text: "火光深处,王凌披着焦黑的冠带,他不语,只是让火舌为之盘问。", source: "梦魇" },
+        { text: "残躯、旧交、家国,以及穷极一生的一切,都从形骸中剥落,和这个加速崩塌的乱世一同沉入飞灰。", source: "梦魇" },
+        { text: "光是极瘦的,奄奄一息地伏在墙角,什么也照不亮,只是把他的影子拖得很长。", source: "残光" },
+        { text: "在这样近乎一无所有的贫瘠中,他仍将一切慷慨地给予我。", source: "残光" },
+        { text: "声音像是从很深的水底浮上来的,斥候的嘴唇在火光中张合,像一条干涸的、濒死的鱼。", source: "秋夜" },
+        { text: "他单方面的,没有一句告别的,独自把自己交给黑夜。太突兀了。", source: "秋夜" },
+        { text: "我以为结局应是一场热烈的火,我们在阵前,在千军万马的嘶吼里,在天与地的震颤中,竭尽最后一滴心血。", source: "秋夜" },
+        { text: "难道我期待着他的死亡?是的,不是,也许。", source: "秋夜" },
+        { text: "天下易鼎只消一场水到渠成的礼仪。", source: "易鼎" },
+        { text: "这是一场无声的寂灭,不闻惊雷。", source: "易鼎" },
+        { text: "水气自芦花间漫起,如幕天席地的鲜缟。", source: "是非" },
+        { text: "我的心被照得历历,在这片将暝未暝的天中。", source: "是非" },
+        { text: "那些关于忠贞与奸恶的纠葛,在漫长的岁月里早已被磨蚀得只剩灰烬。", source: "是非" },
+        { text: "我需要的是战栗、缄默,然后一个荒芜的时代。", source: "京观" },
+        { text: "辽水的涛声渐远了。刀兵喑哑,甲叶无鸣,归途是沉默的。", source: "归途" },
+        { text: "倚重或是堤备,君臣间,不过只是一念之差。", source: "托孤" },
+        { text: "昔日袭人的明丽已不再,随青春陷入眼角的褶皱中。", source: "迟暮" },
+        { text: "权柄已然不在,于是只能知老、知命,而后知退,以残躯自蔽,以蒙昧自全。", source: "迟暮" },
+        { text: "人有好恶,但水从不辨忠奸,只是向东。惧在身后,不在眼前。", source: "东流" },
+        { text: "天裂是不可弥合的,咫尺遂成天涯。", source: "火凤" },
+        { text: "世人对男人的屈膝,向来是极尽宽宥的。他们将俯首奉为藏锋,缄口赞作韬晦。", source: "火凤" },
+        { text: "繁忙的城市正在被灯火漂洗,而朦朦柔和的光落在你的侧脸上,我看不真切。", source: "现世" },
+        { text: "早起时发现窗外飘雪了,天地一色,很好看。惦念着你回来的路,风大概是料峭的。", source: "冬信" }
+    ];
 
-        // === 2. 特调配方字典 (核心玩法) ===
-        // 只有当玩家选的配料【完全包含】配方要求的配料时，才能调出对应酒款。
-        const cocktailRecipes = [
-            {
-                required: ['vodka', 'gin', 'salt', 'mint'], // 必须包含这四个
-                title: "咸冰实验特调",
-                subtitle: "缀薄荷",
-                mood: "😍😍",
-                desc: "液体在舌尖构建了一座迷宫。伏特加、金酒交替出现，层层递进。海盐的咸味提升了整体的甜度，带来海洋的气息。翠绿的薄荷叶点缀其间，带来一丝草本清香。",
-                quote: "这不仅仅是一杯饮料，这是一场微型冒险。",
-                bgColor: "#f3b9c5" // 背景色可以单独配置
-            },
-            {
-                required: ['rum', 'mint', 'soda'], 
-                title: "经典莫吉托",
-                subtitle: "清凉一夏",
-                mood: "😎😎",
-                desc: "朗姆酒的烈性被捣碎的薄荷叶与气泡水完美中和。这是夏日海滩上的标配，清爽解腻，让人仿佛听到了海浪的声音。",
-                quote: "海风的味道，装在杯子里。",
-                bgColor: "#a8e6cf" 
-            },
-            {
-                required: ['gin', 'lemon', 'soda'], 
-                title: "金菲士",
-                subtitle: "酸甜气泡",
-                mood: "🥰🥰",
-                desc: "金酒的杜松子香气与新鲜柠檬汁碰撞，加上苏打水的充盈气泡，口感轻盈顺滑，非常适合作为餐前开胃酒。",
-                quote: "像是在云朵上跳舞。",
-                bgColor: "#ffdfd3" 
-            }
-        ];
+    let isTyping = false;
+    let typeInterval;
 
-        // 默认保底配方 (如果瞎乱选，就出这个)
-        const mysterySludge = {
-            title: "可疑的液体",
-            subtitle: "黑暗料理",
-            mood: "🤢😡",
-            desc: "你把一堆不相干的材料混在了一起。它的颜色呈现出一种难以名状的混沌，散发着危险的气息。顾客看着这杯东西，陷入了沉思。",
-            quote: "真正的勇士，敢于直面奇怪的调酒师。",
-            bgColor: "#787a77" 
-        };
+    function drawQuote() {
+        if (isTyping) return;
 
-        // === 3. 游戏逻辑 ===
-        const containerEl = document.getElementById('ingredients-container');
+        const textSpan = document.getElementById('displayText');
+        const sourceTag = document.getElementById('sourceTag');
+        const btn = document.getElementById('actionBtn');
 
-        // 初始化：渲染所有配料按钮
-        function initIngredients() {
-            containerEl.innerHTML = '';
-            allIngredients.forEach(ing => {
-                const btn = document.createElement('div');
-                btn.className = 'ingredient-btn';
-                btn.innerHTML = `<div class="ingredient-icon">${ing.icon}</div><div>${ing.name}</div>`;
+        // 随机获取一条数据
+        const randomIndex = Math.floor(Math.random() * memories.length);
+        const targetMemory = memories[randomIndex];
+        const targetText = targetMemory.text;
+
+        // 初始状态重置
+        textSpan.innerHTML = '';
+        sourceTag.style.opacity = '0'; // 隐藏来源
+        sourceTag.innerText = `—— 《${targetMemory.source}》`;
+        btn.disabled = true;
+        btn.innerText = "DECRYPTING... // 解析中";
+        isTyping = true;
+
+        let charIndex = 0;
+
+        // 终端机打字特效
+        typeInterval = setInterval(() => {
+            textSpan.innerHTML += targetText.charAt(charIndex);
+            charIndex++;
+
+            if (charIndex >= targetText.length) {
+                clearInterval(typeInterval);
+                isTyping = false;
                 
-                // 点击选择/取消选择
-                btn.onclick = () => {
-                    if (selectedIngredients.includes(ing.id)) {
-                        // 如果已选中，则取消选中
-                        selectedIngredients = selectedIngredients.filter(id => id !== ing.id);
-                        btn.classList.remove('selected');
-                    } else {
-                        // 如果没选中，加入数组
-                        selectedIngredients.push(ing.id);
-                        btn.classList.add('selected');
-                    }
-                };
-                containerEl.appendChild(btn);
-            });
-        }
-
-        // 摇酒按钮逻辑：检查配方
-        function shakeDrink() {
-            if (selectedIngredients.length < 2) {
-                alert("老板，至少加两样配料再摇吧！");
-                return;
+                // 打字结束，亮起来源标签
+                sourceTag.style.opacity = '1';
+                
+                btn.disabled = false;
+                btn.innerText = "ACCESS NEXT // 抽取下一个";
             }
+        }, 50); // 打字速度，50毫秒/字
+    }
+</script>
 
-            // 1. 匹配配方
-            let matchedRecipe = mysterySludge; // 默认是黑暗料理
-            
-            for (let recipe of cocktailRecipes) {
-                // 判断玩家选的配料里，是否包含了该配方要求的所有配料
-                const isMatch = recipe.required.every(reqId => selectedIngredients.includes(reqId));
-                if (isMatch) {
-                    matchedRecipe = recipe;
-                    break; // 匹配到第一个符合的配方就停止
-                }
-            }
-
-            // 2. 渲染结果页
-            document.getElementById('res-title').innerText = matchedRecipe.title;
-            document.getElementById('res-subtitle').innerText = matchedRecipe.subtitle;
-            document.getElementById('res-desc').innerText = matchedRecipe.desc;
-            document.getElementById('res-quote').innerText = matchedRecipe.quote;
-            document.getElementById('mood-icons').innerText = matchedRecipe.mood;
-            document.querySelector('.drink-display').style.backgroundColor = matchedRecipe.bgColor;
-
-            // 渲染底部玩家实际选择的配料标签
-            const recipeBox = document.getElementById('res-recipe');
-            recipeBox.innerHTML = '';
-            selectedIngredients.forEach(id => {
-                // 查找配料的中文名
-                const ingData = allIngredients.find(item => item.id === id);
-                if (ingData) {
-                    recipeBox.innerHTML += `<span class="recipe-item">${ingData.icon} ${ingData.name}</span>`;
-                }
-            });
-
-            // 3. 切换页面显示
-            document.getElementById('selection-section').style.display = 'none';
-            document.getElementById('result-section').style.display = 'block';
-        }
-
-        // 重新开始游戏
-        function resetGame() {
-            selectedIngredients = []; // 清空选中数据
-            initIngredients(); // 重新渲染未选中的按钮
-            document.getElementById('selection-section').style.display = 'block';
-            document.getElementById('result-section').style.display = 'none';
-        }
-
-        // 启动游戏
-        initIngredients();
-    </script>
 </body>
 </html>
