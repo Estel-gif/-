@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调酒师测试：你的专属特调</title>
+    <!-- 引入一款免费的中文像素字体 (示例使用 Google Fonts 的融合黑体或使用系统默认，强烈建议后续下载“Zpix”等专门的中文像素字体) -->
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <style>
+        /* ========== 全局样式 ========== */
+        body {
+            background-color: #e5d8c5; /* 边缘的暗色背景 */
+            background-image: repeating-linear-gradient(45deg, #d3c4b1 25%, transparent 25%, transparent 75%, #d3c4b1 75%, #d3c4b1), repeating-linear-gradient(45deg, #d3c4b1 25%, #e5d8c5 25%, #e5d8c5 75%, #d3c4b1 75%, #d3c4b1);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px; /* 模拟截图边缘的棋盘格/像素底纹 */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #4a3e3d; /* 深棕色文字，比纯黑更柔和 */
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* ========== 主容器 (模拟图中的米黄色卡片) ========== */
+        .container {
+            background-color: #fcf5e3;
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #e0d5c1;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* ========== 测试题部分样式 ========== */
+        #quiz-section {
+            display: block; /* 初始显示 */
+            text-align: center;
+            padding: 40px 0;
+        }
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            border: 2px solid #e0d5c1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #4a3e3d;
+            transition: all 0.2s;
+        }
+        .option-btn:hover {
+            background-color: #f3b9c5;
+            color: white;
+            border-color: #f3b9c5;
+        }
+
+        /* ========== 结果页部分样式 (还原 image.png) ========== */
+        #result-section {
+            display: none; /* 初始隐藏 */
+        }
+
+        /* 顾客心情角标 */
+        .mood-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #f8eeb9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e0d5c1;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+            font-weight: bold;
+            text-align: center;
+        }
+        .mood-icons {
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+
+        /* 饮品图片区域 */
+        .drink-display {
+            background-color: #f3b9c5; /* 柔和的粉色背景 */
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 2px solid #e0d5c1;
+        }
+        /* 用 CSS 简单画一个像素风杯子，实际项目中请替换为美工画的 <img> 图片 */
+        .pixel-drink {
+            width: 40px;
+            height: 80px;
+            background: 
+                linear-gradient(to bottom, transparent 20%, #a8d8e6 20%, #a8d8e6 80%, #4a3e3d 80%), /* 蓝色液体与杯身 */
+                linear-gradient(to right, #4a3e3d 20%, transparent 20%, transparent 80%, #4a3e3d 80%); /* 杯壁边缘 */
+            border: 4px solid #4a3e3d;
+            position: relative;
+        }
+        .pixel-drink::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 10px;
+            width: 12px;
+            height: 20px;
+            background-color: #4a3e3d; /* 杯柄 */
+        }
+        .pixel-drink::before {
+            content: '';
+            position: absolute;
+            bottom: -28px;
+            left: -10px;
+            width: 52px;
+            height: 8px;
+            background-color: #4a3e3d; /* 底座 */
+        }
+
+        /* 标题与描述 */
+        .result-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 10px 0 5px 0;
+            font-weight: 900;
+        }
+        .result-subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #887a77;
+            margin-bottom: 20px;
+        }
+        .result-desc {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        /* 引用语 */
+        .quote {
+            font-style: italic;
+            color: #887a77;
+            text-align: center;
+            margin: 20px 0;
+            padding: 0 20px;
+            position: relative;
+        }
+        .quote::before {
+            content: '“';
+            font-size: 3rem;
+            color: #e0d5c1;
+            position: absolute;
+            left: 0;
+            top: -10px;
+            font-family: serif;
+        }
+
+        /* 配方记录框 */
+        .recipe-box {
+            background-color: #f7eedb;
+            border: 1px solid #e0d5c1;
+            padding: 15px;
+            margin-top: 30px;
+            position: relative;
+        }
+        .recipe-box-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #d1c5b0;
+            padding-bottom: 5px;
+        }
+        /* 模拟黄色胶带 */
+        .tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background-color: rgba(245, 230, 140, 0.7);
+        }
+        .recipe-item {
+            display: inline-block;
+            background-color: #fff;
+            border: 1px solid #e0d5c1;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            margin: 4px 4px 4px 0;
+            border-radius: 2px;
+        }
+        .recipe-row {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .recipe-icon {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- === 答题页面 === -->
+        <div id="quiz-section">
+            <div id="question-text" class="question-title">题目加载中...</div>
+            <div id="options-container">
+                <!-- 选项会通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- === 结果页面 (模拟 image.png) === -->
+        <div id="result-section">
+            <div class="mood-badge">
+                顾客心情<br>
+                <div class="mood-icons">☕ ☕</div>
+            </div>
+
+            <!-- 这里放美工画的像素图，此处用CSS替代演示 -->
+            <div class="drink-display">
+                <div class="pixel-drink"></div>
+            </div>
+
+            <h1 id="res-title" class="result-title">咸冰实验特调</h1>
+            <div id="res-subtitle" class="result-subtitle">缀薄荷</div>
+
+            <p id="res-desc" class="result-desc">
+                液体在舌尖构建了一座迷宫。伏特加、金酒交替出现，层层递进，你永远猜不到下一秒会尝到什么滋味。海盐的咸味提升了整体的甜度，带来海洋的气息。翠绿的薄荷叶点缀其间，带来一丝若有若无的草本清香。
+            </p>
+
+            <div id="res-quote" class="quote">
+                这不仅仅是一杯饮料，这是一场关于味觉的微型冒险。
+            </div>
+
+            <div class="recipe-box">
+                <div class="tape"></div>
+                <div class="recipe-box-title">配方记录</div>
+                
+                <div class="recipe-row">
+                    <span class="recipe-icon">🍶</span>
+                    <span class="recipe-item">伏特加 x1</span>
+                    <span class="recipe-item">金酒 x1</span>
+                </div>
+                <div class="recipe-row">
+                    <span class="recipe-icon">🍋</span>
+                    <span class="recipe-item">薄荷(完整)</span>
+                    <span class="recipe-item">海盐(打碎)</span>
+                    <span class="recipe-item">冰块(完整)</span>
+                </div>
+                <div class="recipe-row">
+                    <span class="recipe-icon">🥛</span>
+                    <span class="recipe-item">香槟杯</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // === 1. 定义题库 ===
+        const questions = [
+            {
+                text: "周末的下午，你更倾向于去哪里消磨时光？",
+                options: [
+                    { text: "热闹的海边派对", scoreType: "salty" },
+                    { text: "安静的地下爵士酒吧", scoreType: "bitter" }
+                ]
+            },
+            {
+                text: "如果生活是一场冒险，你希望你的角色是？",
+                options: [
+                    { text: "打破常规的疯狂科学家", scoreType: "salty" },
+                    { text: "稳重可靠的领航员", scoreType: "bitter" }
+                ]
+            }
+        ];
+
+        // === 2. 定义结果 (对应不同的鸡尾酒) ===
+        // 这里只是示例，你可以根据美工画的图配置很多种结果
+        const results = {
+            "salty": {
+                title: "咸冰实验特调",
+                subtitle: "缀薄荷",
+                desc: "液体在舌尖构建了一座迷宫。伏特加、金酒交替出现，层层递进，你永远猜不到下一秒会尝到什么滋味。海盐的咸味提升了整体的甜度，带来海洋的气息。翠绿的薄荷叶点缀其间，带来一丝若有若无的草本清香。",
+                quote: "这不仅仅是一杯饮料，这是一场关于味觉的微型冒险。"
+                // 实际项目中，这里还可以加上图片的 URL: imageSrc: "assets/drink_salty.png"
+            },
+            "bitter": {
+                title: "苦涩回忆录",
+                subtitle: "少冰",
+                desc: "浓烈的黑刺李金酒带着成熟浆果的醇厚，苦艾酒在喉间留下一抹令人回味的甘苦。它不讨好任何人，只属于懂得沉淀的人。",
+                quote: "过去的都将成为下酒菜。"
+            }
+        };
+
+        // === 3. 游戏逻辑控制 ===
+        let currentQuestionIndex = 0;
+        let scores = { salty: 0, bitter: 0 }; // 积分器
+
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        // 渲染当前题目
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            questionText.innerText = `Q${currentQuestionIndex + 1}. ${q.text}`;
+            optionsContainer.innerHTML = ''; // 清空上一题选项
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => handleAnswer(opt.scoreType);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // 处理回答
+        function handleAnswer(scoreType) {
+            scores[scoreType]++; // 对应属性加分
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion(); // 还有题，继续渲染
+            } else {
+                showResult(); // 没题了，展示结果
+            }
+        }
+
+        // 展示结果
+        function showResult() {
+            quizSection.style.display = 'none'; // 隐藏测试区
+            resultSection.style.display = 'block'; // 显示结果区
+
+            // 计算最高分的属性
+            let finalType = "salty";
+            if (scores.bitter > scores.salty) { finalType = "bitter"; }
+
+            // 填充对应的数据
+            const resData = results[finalType];
+            document.getElementById('res-title').innerText = resData.title;
+            document.getElementById('res-subtitle').innerText = resData.subtitle;
+            document.getElementById('res-desc').innerText = resData.desc;
+            document.getElementById('res-quote').innerText = resData.quote;
+            
+            // 如果美工给了图片，这里可以用JS替换图片地址
+            // document.querySelector('.pixel-drink').style.background = `url(${resData.imageSrc})`;
+        }
+
+        // 游戏初始化
+        renderQuestion();
+    </script>
+</body>
+</html>
